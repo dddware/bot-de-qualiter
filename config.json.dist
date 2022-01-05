@@ -1,0 +1,10 @@
+{
+  "discord": {
+    "token": "",
+    "channelId": ""
+  },
+  "youtube": {
+    "key": "",
+    "channelIds": []
+  }
+}

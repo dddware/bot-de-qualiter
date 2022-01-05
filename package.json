@@ -1,0 +1,16 @@
+{
+  "name": "bot-de-qualiter",
+  "description": "Get new videos from YouTube channels on Discord",
+  "author": "neemzy <tom.panier@free.fr>",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "touch latest.json && node .",
+    "reset": "rm latest.json"
+  },
+  "dependencies": {
+    "discord.js": "^13.5.0",
+    "qs": "^6.10.2",
+    "request": "^2.88.2"
+  }
+}

@@ -19,7 +19,16 @@ Edit the newly created file:
   },
   "youtube": {
     "key": "YouTube API key",
-    "channelIds": ["YouTube channel id", "Other YouTube channel id", "..."]
+    "subs": [
+      {
+        "channelId": "YouTube channel id"
+      },
+      {
+        "channelId": "YouTube channel id",
+        "q": "keywords to filter videos by their title"
+      },
+      // ...
+    ]
   }
 }
 ```
@@ -32,7 +41,7 @@ You can use [this online tool](https://commentpicker.com/youtube-channel-id.php)
 $ npm start
 ```
 
-Latest videos from each channel will be stored locally in the `latest.json` file. Whenever this tool runs and a latest video changes, its link will be posted to the relevant Discord channel.
+Latest videos from each channel (matching the `q` parameter, if there is one) will be stored locally in the `latest.json` file. Whenever this tool runs and a latest video changes, its link will be posted to the relevant Discord channel.
 
 ```sh
 $ npm run reset

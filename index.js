@@ -20,13 +20,13 @@ client.once("ready", () => {
     return;
   }
 
-  Promise.all(youtube.channelIds.map(channelId => {
+  Promise.all(youtube.subs.map(({ channelId, q = "" }) => {
     const params = {
       key: youtube.key,
       channelId: channelId,
       part: "snippet",
       order: "date",
-      maxResults: 1
+      maxResults: 50,
     };
 
     return new Promise(resolve => {
@@ -37,7 +37,7 @@ client.once("ready", () => {
           if (err) {
             console.error(err);
           } else {
-            const currentLatest = body.items.shift();
+            const currentLatest = body.items.filter(item => item.snippet.title.toLowerCase().includes(q.toLowerCase())).shift();
 
             if (currentLatest && latest[channelId] !== currentLatest.id.videoId) {
               latest[channelId] = currentLatest.id.videoId;

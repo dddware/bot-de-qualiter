@@ -5,6 +5,14 @@
   },
   "youtube": {
     "key": "",
-    "channelIds": []
+    "subs": [
+      {
+        "channelId": "",
+      },
+      {
+        "channelId": "",
+        "q": ""
+      }
+    ]
   }
 }

@@ -29,6 +29,10 @@ Edit the newly created file:
       },
       // ...
     ]
+  },
+  "openai": {
+    "key": "OpenAI API key", // cf. infra
+    "temperature": 0         // 0-1
   }
 }
 ```
@@ -48,3 +52,9 @@ $ npm run reset
 ```
 
 Removes the `latest.json` file to reset stored latest videos.
+
+```sh
+$ npm run gpt
+```
+
+Bonus feature: the bot will answer messages where it is mentioned using ChatGPT (run in the background using e.g. `pm2` if you need to).

@@ -14,5 +14,9 @@
         "q": ""
       }
     ]
+  },
+  "openai": {
+    "key": "",
+    "temperature": 0
   }
 }

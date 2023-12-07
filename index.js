@@ -4,10 +4,10 @@ const qs = require("qs");
 const { Client, Intents } = require("discord.js");
 const { discord, youtube } = require("./config");
 const filePath = "./latest.json";
-let latest = {};
+let latestSaved = {};
 
 try {
-  latest = JSON.parse(fs.readFileSync(filePath, { encoding: "utf8" }));
+  latestSaved = JSON.parse(fs.readFileSync(filePath, { encoding: "utf8" }));
 } catch (error) {}
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -37,11 +37,20 @@ client.once("ready", () => {
           if (err) {
             console.error(err);
           } else {
-            const currentLatest = body.items.filter(item => item.snippet.title.toLowerCase().includes(q.toLowerCase())).shift();
+            const latestResult = body.items.filter(item => item.snippet.title.toLowerCase().includes(q.toLowerCase())).shift();
 
-            if (currentLatest && latest[channelId] !== currentLatest.id.videoId) {
-              latest[channelId] = currentLatest.id.videoId;
-              resolve(currentLatest.id.videoId);
+            if (latestResult
+              && latestSaved[channelId]?.videoId !== latestResult.id.videoId
+              && (!latestSaved[channelId]?.publishedAt
+                || latestSaved[channelId]?.publishedAt < latestResult.snippet.publishedAt
+              )
+            ) {
+              latestSaved[channelId] = {
+                videoId: latestResult.id.videoId,
+                publishedAt: latestResult.snippet.publishedAt,
+              };
+
+              resolve(latestResult.id.videoId);
             }
           }
 
@@ -50,7 +59,7 @@ client.once("ready", () => {
       );
     }).then(videoId => videoId ? channel.send(`https://www.youtube.com/watch?v=${videoId}`) : null);
   })).then(() => {
-    fs.writeFileSync(filePath, JSON.stringify(latest), { encoding: "utf8" });
+    fs.writeFileSync(filePath, JSON.stringify(latestSaved), { encoding: "utf8" });
     client.destroy();
   });
 });

@@ -20,37 +20,53 @@ client.once("ready", () => {
     return;
   }
 
-  Promise.all(youtube.subs.map(({ channelId, q = "" }) => {
+  Promise.all(youtube.subs.map(({ channelId, playlistId, q = "" }) => {
     const params = {
       key: youtube.key,
-      channelId: channelId,
       part: "snippet",
       order: "date",
       maxResults: 50,
     };
 
-    return new Promise(resolve => {
+    if (channelId) {
+      params.channelId = channelId;
+    } else if (playlistId) {
+      params.playlistId = playlistId;
+    } else {
+      return new Promise((resolve, reject) => reject("Each entry must have a channelId or playlistId"));
+    }
+
+    return new Promise((resolve, reject) => {
       request(
-        `https://www.googleapis.com/youtube/v3/search?${qs.stringify(params)}`,
+        `https://www.googleapis.com/youtube/v3/${channelId ? "search" : "playlistItems"}?${qs.stringify(params)}`,
         { json: true },
         (err, res, body) => {
           if (err) {
-            console.error(err);
+            reject(err);
+          } else if (res.statusCode >= 400) {
+            reject(body.error.message);
           } else {
-            const latestResult = body.items.filter(item => item.snippet.title.toLowerCase().includes(q.toLowerCase())).shift();
+            const key = channelId || playlistId;
+
+            const latestResult = body.items
+              .filter(item => item.snippet.title.toLowerCase().includes(q.toLowerCase()))
+              .sort((itemA, itemB) => itemB.snippet.publishedAt.localeCompare(itemA.snippet.publishedAt))
+              .shift();
+
+            const videoId = latestResult.id.videoId || latestResult.snippet.resourceId.videoId;
 
             if (latestResult
-              && latestSaved[channelId]?.videoId !== latestResult.id.videoId
-              && (!latestSaved[channelId]?.publishedAt
-                || latestSaved[channelId]?.publishedAt < latestResult.snippet.publishedAt
+              && latestSaved[key]?.videoId !== videoId
+              && (!latestSaved[key]?.publishedAt
+                || latestSaved[key]?.publishedAt < latestResult.snippet.publishedAt
               )
             ) {
-              latestSaved[channelId] = {
-                videoId: latestResult.id.videoId,
+              latestSaved[key] = {
+                videoId,
                 publishedAt: latestResult.snippet.publishedAt,
               };
 
-              resolve(latestResult.id.videoId);
+              resolve(videoId);
             }
           }
 
@@ -60,6 +76,9 @@ client.once("ready", () => {
     }).then(videoId => videoId ? channel.send(`https://www.youtube.com/watch?v=${videoId}`) : null);
   })).then(() => {
     fs.writeFileSync(filePath, JSON.stringify(latestSaved), { encoding: "utf8" });
+  }).catch(error => {
+    console.error(error);
+  }).finally(() => {
     client.destroy();
   });
 });

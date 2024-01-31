@@ -8,10 +8,10 @@
     "subs": [
       {
         "channelId": "",
+        "q": ""
       },
       {
-        "channelId": "",
-        "q": ""
+        "playlistId": ""
       }
     ]
   },

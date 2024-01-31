@@ -1,6 +1,6 @@
 # bot-de-qualiter
 
-Get new videos from YouTube channels on Discord
+Get new videos from YouTube channels and playlists on Discord
 
 ## Setup
 
@@ -21,11 +21,11 @@ Edit the newly created file:
     "key": "YouTube API key",
     "subs": [
       {
-        "channelId": "YouTube channel id"
-      },
-      {
         "channelId": "YouTube channel id",
         "q": "keywords to filter videos by their title"
+      },
+      {
+        "playlistId": "YouTube playlist id"
       },
       // ...
     ]
@@ -37,7 +37,7 @@ Edit the newly created file:
 }
 ```
 
-You can use [this online tool](https://commentpicker.com/youtube-channel-id.php) to find channel ids if needed.
+You can use [this online tool](https://commentpicker.com/youtube-channel-id.php) to find channel ids if needed. Playlist ids are directly accessible from client-facing URLs: `https://www.youtube.com/playlist?list={playlistId}`
 
 ## Usage
 

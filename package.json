@@ -1,6 +1,6 @@
 {
   "name": "bot-de-qualiter",
-  "description": "Get new videos from YouTube channels on Discord",
+  "description": "Get new videos from YouTube channels and playlists on Discord",
   "author": "neemzy <tom.panier@free.fr>",
   "private": true,
   "main": "index.js",

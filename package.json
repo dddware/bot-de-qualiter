@@ -7,11 +7,13 @@
   "scripts": {
     "start": "touch latest.json && node .",
     "reset": "rm latest.json",
-    "gpt": "node gpt.js"
+    "gpt": "node gpt.js",
+    "wiki": "node wiki.js"
   },
   "dependencies": {
     "discord.js": "^13.5.0",
     "qs": "^6.10.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "wikipedia": "^2.1.2"
   }
 }

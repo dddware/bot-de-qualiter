@@ -33,6 +33,9 @@ Edit the newly created file:
   "openai": {
     "key": "OpenAI API key", // cf. infra
     "temperature": 0         // 0-1
+  },
+  "wikipedia": {
+    "language": "en"         // cf. infra (default)
   }
 }
 ```
@@ -53,8 +56,11 @@ $ npm run reset
 
 Removes the `latest.json` file to reset stored latest videos.
 
-```sh
-$ npm run gpt
-```
+### Bonus features
 
-Bonus feature: the bot will answer messages where it is mentioned using ChatGPT (run in the background using e.g. `pm2` if you need to).
+Using these requires having the bot running in the background (using e.g. `pm2`) and listening to messages in the channel, reacting to the ones `@mention`ing it:
+
+```sh
+$ npm run gpt  # replies using ChatGPT
+$ npm run wiki # checks Wikipedia to confirm whether a given person is dead yet
+```

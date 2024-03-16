@@ -18,5 +18,8 @@
   "openai": {
     "key": "",
     "temperature": 0
+  },
+  "wikipedia": {
+    "language": "en"
   }
 }

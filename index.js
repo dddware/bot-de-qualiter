@@ -8,6 +8,18 @@ let latestSaved = {};
 
 const pluck = (obj, keys) => keys.reduce((acc, key) => ({ ...acc, ...(key in obj ? { [key]: obj[key] } : {}) }), {});
 
+function isShort(videoId) {
+  return new Promise((resolve, reject) => {
+    request(`https://www.youtube.com/shorts/${videoId}`, { followRedirect: false }, (err, res, body) => {
+      if (res.statusCode === 200) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  })
+}
+
 try {
   latestSaved = JSON.parse(fs.readFileSync(filePath, { encoding: "utf8" }));
 } catch (error) {}
@@ -42,7 +54,7 @@ client.once("ready", () => {
       request(
         `https://www.googleapis.com/youtube/v3/${sub.channelId ? "search" : "playlistItems"}?${qs.stringify(params)}`,
         { json: true },
-        (err, res, body) => {
+        async (err, res, body) => {
           if (err) {
             reject(err);
           } else if (res.statusCode >= 400) {
@@ -66,13 +78,19 @@ client.once("ready", () => {
               } else if (latestSaved[key]?.publishedAt && latestSaved[key].publishedAt >= latestResult.snippet.publishedAt) {
                 console.log(`Latest video (${latestResult.snippet.publishedAt}) is no newer than ${latestSaved[key].publishedAt}`, sub);
               } else {
-                latestSaved[key] = {
-                  videoId,
-                  publishedAt: latestResult.snippet.publishedAt,
-                };
+                const latestIsShort = await isShort(videoId);
 
-                console.log(`Newer video (${videoUrl}) found`, sub);
-                resolve(videoUrl);
+                if (latestIsShort) {
+                  console.log(`Latest video (${videoUrl}) is a short, skipping`, sub);
+                } else {
+                  latestSaved[key] = {
+                    videoId,
+                    publishedAt: latestResult.snippet.publishedAt,
+                  };
+
+                  console.log(`Newer video (${videoUrl}) found`, sub);
+                  resolve(videoUrl);
+                }
               }
             }
           }
